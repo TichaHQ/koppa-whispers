@@ -14,7 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          batch: string | null
+          created_at: string
+          email: string | null
+          id: string
+          state_of_deployment: string | null
+          stream: string | null
+          updated_at: string
+          user_id: string
+          username: string
+          year_of_deployment: number | null
+        }
+        Insert: {
+          batch?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          state_of_deployment?: string | null
+          stream?: string | null
+          updated_at?: string
+          user_id: string
+          username: string
+          year_of_deployment?: number | null
+        }
+        Update: {
+          batch?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          state_of_deployment?: string | null
+          stream?: string | null
+          updated_at?: string
+          user_id?: string
+          username?: string
+          year_of_deployment?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
