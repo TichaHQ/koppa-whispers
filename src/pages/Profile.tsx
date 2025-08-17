@@ -130,6 +130,7 @@ export default function Profile() {
 
   const handleShare = (platform: string) => {
     const profileUrl = `${window.location.origin}/profile/${displayProfile?.username}`;
+    const shareText = `Hey fellow koppas! 🚀 I'm on KoppaWhisper - the anonymous messaging platform for our NYSC community. Want to tell me something anonymously? Drop your thoughts, confessions, or just say hi! 💬✨ ${profileUrl}`;
     
     switch (platform) {
       case 'copy':
@@ -140,10 +141,10 @@ export default function Profile() {
         });
         break;
       case 'whatsapp':
-        window.open(`https://wa.me/?text=Check out my KoppaWhisper profile: ${profileUrl}`, '_blank');
+        window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
         break;
       case 'facebook':
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${profileUrl}`, '_blank');
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(profileUrl)}&quote=${encodeURIComponent("Hey fellow koppas! 🚀 I'm on KoppaWhisper - send me anonymous messages and let's connect!")}`, '_blank');
         break;
       case 'instagram':
         toast({
