@@ -168,13 +168,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return { error: { message: 'No user logged in' } };
       }
 
+      // Use UPDATE instead of UPSERT to preserve existing data like username
       const { error } = await supabase
         .from('profiles')
-        .upsert({
-          user_id: user.id,
+        .update({
           ...updates,
           updated_at: new Date().toISOString(),
-        });
+        })
+        .eq('user_id', user.id);
 
       if (error) {
         return { error };
