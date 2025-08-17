@@ -9,6 +9,8 @@ import { Copy, MessageSquare, Facebook, Instagram, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { Dashboard } from "@/components/dashboard/Dashboard";
+import { SendAnonymousMessage } from "@/components/anonymous/SendAnonymousMessage";
 
 const nigerianStates = [
   "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
@@ -26,6 +28,7 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [publicProfile, setPublicProfile] = useState<any>(null);
   const [loadingPublicProfile, setLoadingPublicProfile] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
   const [formData, setFormData] = useState({
     batch: '',
     stream: '',
@@ -38,7 +41,8 @@ export default function Profile() {
   const displayProfile = isOwnProfile ? profile : publicProfile;
 
   useEffect(() => {
-    if (!loading && !user) {
+    // If loading is done and no user, but we have a username (public profile view), allow it
+    if (!loading && !user && !username) {
       navigate('/auth');
       return;
     }
@@ -167,8 +171,71 @@ export default function Profile() {
     );
   }
 
+  // If viewing someone else's profile and not authenticated, show anonymous message form
+  if (!user && username && publicProfile) {
+    return (
+      <div className="min-h-screen bg-gradient-hero p-4">
+        <div className="max-w-2xl mx-auto space-y-6">
+          <div className="flex justify-center">
+            <Button
+              variant="outline"
+              onClick={() => navigate('/')}
+              className="border-white/20 text-white hover:bg-white/10"
+            >
+              ← Back to Home
+            </Button>
+          </div>
+          
+          <div className="text-center text-white mb-6">
+            <h1 className="text-2xl font-bold mb-2">@{publicProfile.username}'s Profile</h1>
+            <p className="text-white/80">Send them an anonymous message!</p>
+          </div>
+          
+          <SendAnonymousMessage 
+            recipientUsername={publicProfile.username}
+            recipientUserId={publicProfile.user_id}
+          />
+        </div>
+      </div>
+    );
+  }
+
   if (!user) {
     return null;
+  }
+
+  // Show dashboard for authenticated users on their own profile
+  if (isOwnProfile && showDashboard) {
+    return (
+      <div className="min-h-screen bg-gradient-hero p-4">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <div className="flex justify-between items-center">
+            <Button
+              variant="outline"
+              onClick={() => setShowDashboard(false)}
+              className="border-white/20 text-white hover:bg-white/10"
+            >
+              ← Back to Profile
+            </Button>
+            
+            <Button
+              variant="outline"
+              onClick={handleSignOut}
+              className="border-white/20 text-white hover:bg-white/10"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
+
+          <Card className="bg-gradient-card border-0 shadow-glow">
+            <CardContent className="p-6">
+              <Dashboard />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -325,9 +392,9 @@ export default function Profile() {
             {/* Action Buttons */}
             <div className="space-y-4">
               {isOwnProfile && (
-                <div className="flex gap-2">
+                <div className="space-y-2">
                   {isEditing ? (
-                    <>
+                    <div className="flex gap-2">
                       <Button onClick={handleSave} className="flex-1">
                         Save Changes
                       </Button>
@@ -338,17 +405,34 @@ export default function Profile() {
                       >
                         Cancel
                       </Button>
-                    </>
+                    </div>
                   ) : (
-                    <Button 
-                      onClick={() => setIsEditing(true)} 
-                      className="w-full"
-                      variant="hero"
-                    >
-                      Edit Profile
-                    </Button>
+                    <>
+                      <Button 
+                        onClick={() => setShowDashboard(true)} 
+                        className="w-full"
+                        variant="hero"
+                      >
+                        View Dashboard
+                      </Button>
+                      <Button 
+                        onClick={() => setIsEditing(true)} 
+                        variant="outline"
+                        className="w-full"
+                      >
+                        Edit Profile
+                      </Button>
+                    </>
                   )}
                 </div>
+              )}
+
+              {/* Anonymous message option for viewing other profiles */}
+              {!isOwnProfile && user && publicProfile && (
+                <SendAnonymousMessage 
+                  recipientUsername={publicProfile.username}
+                  recipientUserId={publicProfile.user_id}
+                />
               )}
 
               {/* Share Buttons */}
