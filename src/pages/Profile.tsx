@@ -180,7 +180,7 @@ export default function Profile() {
             <Button
               variant="outline"
               onClick={() => navigate('/')}
-              className="border-white/20 text-white hover:bg-white/10"
+              className="border-primary/20 text-primary hover:bg-primary/10"
             >
               ← Back to Home
             </Button>
@@ -213,7 +213,7 @@ export default function Profile() {
             <Button
               variant="outline"
               onClick={() => setShowDashboard(false)}
-              className="border-white/20 text-white hover:bg-white/10"
+              className="border-primary/20 text-primary hover:bg-primary/10"
             >
               ← Back to Profile
             </Button>
@@ -221,7 +221,7 @@ export default function Profile() {
             <Button
               variant="outline"
               onClick={handleSignOut}
-              className="border-white/20 text-white hover:bg-white/10"
+              className="border-primary/20 text-primary hover:bg-primary/10"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Sign Out
@@ -246,7 +246,7 @@ export default function Profile() {
           <Button
             variant="outline"
             onClick={() => navigate('/')}
-            className="border-white/20 text-white hover:bg-white/10"
+            className="border-primary/20 text-primary hover:bg-primary/10"
           >
             ← Back to Home
           </Button>
@@ -255,7 +255,7 @@ export default function Profile() {
             <Button
               variant="outline"
               onClick={handleSignOut}
-              className="border-white/20 text-white hover:bg-white/10"
+              className="border-primary/20 text-primary hover:bg-primary/10"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Sign Out
