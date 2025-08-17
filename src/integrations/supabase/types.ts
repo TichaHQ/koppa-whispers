@@ -88,6 +88,7 @@ export type Database = {
           created_at: string | null
           state_of_deployment: string | null
           stream: string | null
+          user_id: string | null
           username: string | null
           year_of_deployment: number | null
         }
@@ -96,6 +97,7 @@ export type Database = {
           created_at?: string | null
           state_of_deployment?: string | null
           stream?: string | null
+          user_id?: string | null
           username?: string | null
           year_of_deployment?: number | null
         }
@@ -104,6 +106,7 @@ export type Database = {
           created_at?: string | null
           state_of_deployment?: string | null
           stream?: string | null
+          user_id?: string | null
           username?: string | null
           year_of_deployment?: number | null
         }
