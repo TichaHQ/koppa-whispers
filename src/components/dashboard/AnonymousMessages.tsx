@@ -128,44 +128,41 @@ export const AnonymousMessages = ({ onBack }: AnonymousMessagesProps) => {
       ) : (
         <div className="space-y-4">
           {messages.map((message) => (
-            <Card 
-              key={message.id} 
-              className={`transition-colors ${!message.is_read ? 'border-primary bg-primary/5' : ''}`}
-            >
+            <Card key={message.id}>
               <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">Anonymous message</span>
-                    {!message.is_read && (
-                      <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
-                        New
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    {format(new Date(message.created_at), 'MMM d, yyyy h:mm a')}
-                  </div>
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Anonymous message</span>
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
-                <p className="text-foreground whitespace-pre-wrap">{message.message}</p>
-                {!message.is_read && (
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="mt-3"
-                    onClick={() => markAsRead(message.id)}
-                  >
-                    Mark as read
-                  </Button>
-                )}
+                <p className="text-foreground whitespace-pre-wrap mb-3">{message.message}</p>
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Clock className="h-3 w-3" />
+                  {format(new Date(message.created_at), 'MMM d, yyyy h:mm a')}
+                </div>
               </CardContent>
             </Card>
           ))}
         </div>
       )}
+      
+      {/* Always show share button at bottom */}
+      <div className="pt-6 border-t">
+        <div className="text-center">
+          <Button 
+            onClick={handleShareProfile}
+            variant="outline"
+            className="max-w-xs"
+          >
+            <Share2 className="h-4 w-4 mr-2" />
+            Share Your Anonymous Link
+          </Button>
+          <p className="text-xs text-muted-foreground mt-2">
+            Get more anonymous messages by sharing your profile
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
