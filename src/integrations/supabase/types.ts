@@ -55,7 +55,33 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          batch: string | null
+          created_at: string | null
+          state_of_deployment: string | null
+          stream: string | null
+          username: string | null
+          year_of_deployment: number | null
+        }
+        Insert: {
+          batch?: string | null
+          created_at?: string | null
+          state_of_deployment?: string | null
+          stream?: string | null
+          username?: string | null
+          year_of_deployment?: number | null
+        }
+        Update: {
+          batch?: string | null
+          created_at?: string | null
+          state_of_deployment?: string | null
+          stream?: string | null
+          username?: string | null
+          year_of_deployment?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never

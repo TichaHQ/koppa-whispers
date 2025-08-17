@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Copy, MessageSquare, Facebook, Instagram, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
 const nigerianStates = [
@@ -23,6 +24,8 @@ export default function Profile() {
   const { user, profile, loading, updateProfile, signOut } = useAuth();
   
   const [isEditing, setIsEditing] = useState(false);
+  const [publicProfile, setPublicProfile] = useState<any>(null);
+  const [loadingPublicProfile, setLoadingPublicProfile] = useState(false);
   const [formData, setFormData] = useState({
     batch: '',
     stream: '',
@@ -32,6 +35,7 @@ export default function Profile() {
   });
 
   const isOwnProfile = !username || (profile?.username === username);
+  const displayProfile = isOwnProfile ? profile : publicProfile;
 
   useEffect(() => {
     if (!loading && !user) {
@@ -39,7 +43,7 @@ export default function Profile() {
       return;
     }
 
-    if (profile) {
+    if (profile && isOwnProfile) {
       setFormData({
         batch: profile.batch || '',
         stream: profile.stream || '',
@@ -48,7 +52,43 @@ export default function Profile() {
         email: profile.email || ''
       });
     }
-  }, [user, profile, loading, navigate]);
+
+    // If viewing someone else's profile, fetch their public data
+    if (username && !isOwnProfile) {
+      fetchPublicProfile(username);
+    }
+  }, [user, profile, loading, navigate, username, isOwnProfile]);
+
+  const fetchPublicProfile = async (targetUsername: string) => {
+    setLoadingPublicProfile(true);
+    try {
+      const { data, error } = await supabase
+        .from('public_profiles')
+        .select('*')
+        .eq('username', targetUsername)
+        .single();
+      
+      if (error) {
+        if (error.code === 'PGRST116') {
+          toast({
+            title: "Profile not found",
+            description: "The user profile you're looking for doesn't exist.",
+            variant: "destructive"
+          });
+          navigate('/');
+        } else {
+          console.error('Error fetching public profile:', error);
+        }
+        return;
+      }
+      
+      setPublicProfile(data);
+    } catch (error) {
+      console.error('Error fetching public profile:', error);
+    } finally {
+      setLoadingPublicProfile(false);
+    }
+  };
 
   const handleSave = async () => {
     const updates = {
@@ -63,7 +103,7 @@ export default function Profile() {
   };
 
   const handleShare = (platform: string) => {
-    const profileUrl = `${window.location.origin}/profile/${profile?.username}`;
+    const profileUrl = `${window.location.origin}/profile/${displayProfile?.username}`;
     
     switch (platform) {
       case 'copy':
@@ -94,7 +134,7 @@ export default function Profile() {
     navigate('/');
   };
 
-  if (loading) {
+  if (loading || loadingPublicProfile) {
     return (
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
         <div className="text-center">
@@ -138,7 +178,7 @@ export default function Profile() {
         <Card className="bg-gradient-card border-0 shadow-glow">
           <CardHeader className="text-center">
             <CardTitle className="text-3xl font-bold text-primary">
-              @{profile?.username || 'Loading...'}
+              @{displayProfile?.username || 'Loading...'}
             </CardTitle>
             <CardDescription>
               {isOwnProfile ? 'Your KoppaWhisper Profile' : 'KoppaWhisper Profile'}
@@ -167,7 +207,7 @@ export default function Profile() {
                     </Select>
                   ) : (
                     <div className="p-2 bg-muted rounded-md">
-                      {profile?.batch ? `Batch ${profile.batch}` : 'Not set'}
+                      {displayProfile?.batch ? `Batch ${displayProfile.batch}` : 'Not set'}
                     </div>
                   )}
                 </div>
@@ -189,7 +229,7 @@ export default function Profile() {
                     </Select>
                   ) : (
                     <div className="p-2 bg-muted rounded-md">
-                      {profile?.stream ? `Stream ${profile.stream}` : 'Not set'}
+                      {displayProfile?.stream ? `Stream ${displayProfile.stream}` : 'Not set'}
                     </div>
                   )}
                 </div>
@@ -213,7 +253,7 @@ export default function Profile() {
                   </Select>
                 ) : (
                   <div className="p-2 bg-muted rounded-md">
-                    {profile?.year_of_deployment || 'Not set'}
+                    {displayProfile?.year_of_deployment || 'Not set'}
                   </div>
                 )}
               </div>
@@ -236,7 +276,7 @@ export default function Profile() {
                   </Select>
                 ) : (
                   <div className="p-2 bg-muted rounded-md">
-                    {profile?.state_of_deployment || 'Not set'}
+                    {displayProfile?.state_of_deployment || 'Not set'}
                   </div>
                 )}
               </div>
