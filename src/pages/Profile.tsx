@@ -91,19 +91,25 @@ export default function Profile() {
   };
 
   const handleSave = async () => {
-    const updates = {
-      ...formData,
-      year_of_deployment: formData.year_of_deployment ? parseInt(formData.year_of_deployment) : null
-    };
+    try {
+      const updates = {
+        ...formData,
+        year_of_deployment: formData.year_of_deployment ? parseInt(formData.year_of_deployment) : null
+      };
 
-    const { error } = await updateProfile(updates);
-    if (!error) {
-      setIsEditing(false);
-      toast({
-        title: "Profile updated!",
-        description: "Your profile changes have been saved successfully.",
-      });
-    } else {
+      const { error } = await updateProfile(updates);
+      if (!error) {
+        setIsEditing(false);
+      } else {
+        console.error('Profile update error:', error);
+        toast({
+          title: "Error",
+          description: "Failed to save your profile changes. Please try again.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Profile update error:', error);
       toast({
         title: "Error",
         description: "Failed to save your profile changes. Please try again.",
