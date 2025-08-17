@@ -99,6 +99,16 @@ export default function Profile() {
     const { error } = await updateProfile(updates);
     if (!error) {
       setIsEditing(false);
+      toast({
+        title: "Profile updated!",
+        description: "Your profile changes have been saved successfully.",
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to save your profile changes. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
