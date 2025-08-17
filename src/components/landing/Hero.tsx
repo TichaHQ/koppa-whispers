@@ -1,9 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MessageCircle, Users, Shield } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 import heroBackground from "@/assets/hero-background.jpg";
 
 export const Hero = () => {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate('/auth');
+  };
+
+  const handleJoinRoom = () => {
+    toast({
+      title: "Anonymous Rooms coming soon",
+      description: "This feature will be available soon. Stay tuned!",
+    });
+  };
   return (
     <div 
       className="min-h-screen bg-cover bg-center bg-no-repeat relative"
@@ -52,6 +66,7 @@ export const Hero = () => {
               variant="hero" 
               size="lg" 
               className="w-full sm:w-auto text-lg px-8 py-4"
+              onClick={handleGetStarted}
             >
               Get Started
             </Button>
@@ -59,6 +74,7 @@ export const Hero = () => {
               variant="social" 
               size="lg" 
               className="w-full sm:w-auto text-lg px-8 py-4"
+              onClick={handleJoinRoom}
             >
               Join a Room
             </Button>
