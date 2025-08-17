@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MessageSquare, Clock } from "lucide-react";
+import { ArrowLeft, MessageSquare, Clock, Share2, Copy, MessageCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
@@ -21,7 +21,7 @@ interface AnonymousMessagesProps {
 export const AnonymousMessages = ({ onBack }: AnonymousMessagesProps) => {
   const [messages, setMessages] = useState<AnonymousMessage[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
 
   useEffect(() => {
     if (user) {
@@ -74,6 +74,15 @@ export const AnonymousMessages = ({ onBack }: AnonymousMessagesProps) => {
     }
   };
 
+  const handleShareProfile = () => {
+    const profileUrl = `${window.location.origin}/profile/${profile?.username}`;
+    navigator.clipboard.writeText(profileUrl);
+    toast({
+      title: "Link copied!",
+      description: "Your profile link has been copied to clipboard. Share it to receive anonymous messages!",
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -95,12 +104,25 @@ export const AnonymousMessages = ({ onBack }: AnonymousMessagesProps) => {
         </div>
       ) : messages.length === 0 ? (
         <Card>
-          <CardContent className="text-center py-8">
-            <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No messages yet</h3>
-            <p className="text-muted-foreground">
-              When someone sends you an anonymous message, it will appear here.
+          <CardContent className="text-center py-12">
+            <MessageCircle className="h-16 w-16 text-muted-foreground mx-auto mb-6" />
+            <h3 className="text-xl font-semibold mb-3">No anonymous messages yet</h3>
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+              Start receiving anonymous messages by sharing your profile link with friends, classmates, or on social media!
             </p>
+            <div className="space-y-3">
+              <Button 
+                onClick={handleShareProfile}
+                className="w-full max-w-xs"
+                variant="default"
+              >
+                <Share2 className="h-4 w-4 mr-2" />
+                Share My Profile Link
+              </Button>
+              <p className="text-xs text-muted-foreground">
+                People can send you anonymous messages when they visit your profile
+              </p>
+            </div>
           </CardContent>
         </Card>
       ) : (
