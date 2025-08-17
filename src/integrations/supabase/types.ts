@@ -21,7 +21,6 @@ export type Database = {
           is_read: boolean
           message: string
           recipient_user_id: string
-          sender_ip: string | null
         }
         Insert: {
           created_at?: string
@@ -29,7 +28,6 @@ export type Database = {
           is_read?: boolean
           message: string
           recipient_user_id: string
-          sender_ip?: string | null
         }
         Update: {
           created_at?: string
@@ -37,7 +35,6 @@ export type Database = {
           is_read?: boolean
           message?: string
           recipient_user_id?: string
-          sender_ip?: string | null
         }
         Relationships: []
       }
