@@ -70,25 +70,38 @@ export default function Profile() {
         .from('public_profiles')
         .select('*')
         .eq('username', targetUsername)
-        .single();
+        .maybeSingle();
       
       if (error) {
-        if (error.code === 'PGRST116') {
-          toast({
-            title: "Profile not found",
-            description: "The user profile you're looking for doesn't exist.",
-            variant: "destructive"
-          });
-          navigate('/');
-        } else {
-          console.error('Error fetching public profile:', error);
-        }
+        console.error('Error fetching public profile:', error);
+        toast({
+          title: "Error loading profile",
+          description: "There was an error loading the profile. Please try again.",
+          variant: "destructive"
+        });
+        navigate('/');
+        return;
+      }
+      
+      if (!data) {
+        toast({
+          title: "Profile not found",
+          description: "The user profile you're looking for doesn't exist.",
+          variant: "destructive"
+        });
+        navigate('/');
         return;
       }
       
       setPublicProfile(data);
     } catch (error) {
       console.error('Error fetching public profile:', error);
+      toast({
+        title: "Error loading profile",
+        description: "There was an error loading the profile. Please try again.",
+        variant: "destructive"
+      });
+      navigate('/');
     } finally {
       setLoadingPublicProfile(false);
     }
