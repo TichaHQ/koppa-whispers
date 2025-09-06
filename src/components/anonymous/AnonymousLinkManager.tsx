@@ -254,6 +254,13 @@ export const AnonymousLinkManager = () => {
                   </div>
                   <div className="flex gap-2">
                     <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => window.open(`/link-messages/${link.id}`, '_blank')}
+                    >
+                      View Messages
+                    </Button>
+                    <Button
                       variant="outline"
                       size="sm"
                       onClick={() => copyLinkToClipboard(link.link_slug)}
