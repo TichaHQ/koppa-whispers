@@ -45,7 +45,6 @@ export const SendAnonymousMessage = ({ recipientUsername, recipientUserId }: Sen
         .insert({
           recipient_user_id: recipientUserId,
           message: message.trim(),
-          sender_ip: null, // You could implement IP tracking if needed
         });
 
       if (error) {

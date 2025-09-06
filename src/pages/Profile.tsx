@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Dashboard } from "@/components/dashboard/Dashboard";
 import { SendAnonymousMessage } from "@/components/anonymous/SendAnonymousMessage";
+import { AnonymousLinkManager } from "@/components/anonymous/AnonymousLinkManager";
 
 const nigerianStates = [
   "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
@@ -185,31 +186,14 @@ export default function Profile() {
     );
   }
 
-  // If viewing someone else's profile and not authenticated, show anonymous message form
-  if (!user && username && publicProfile) {
+  // Simplified view for users viewing public profiles (authenticated or not)
+  if (publicProfile && username && publicProfile.username !== profile?.username) {
     return (
-      <div className="min-h-screen bg-gradient-hero p-4">
-        <div className="max-w-2xl mx-auto space-y-6">
-          <div className="flex justify-center">
-            <Button
-              variant="outline"
-              onClick={() => navigate('/')}
-              className="border-primary/20 text-primary hover:bg-primary/10"
-            >
-              ← Back to Home
-            </Button>
-          </div>
-          
-          <div className="text-center text-white mb-6">
-            <h1 className="text-2xl font-bold mb-2">@{publicProfile.username}'s Profile</h1>
-            <p className="text-white/80">Send them an anonymous message!</p>
-          </div>
-          
-          <SendAnonymousMessage 
-            recipientUsername={publicProfile.username}
-            recipientUserId={publicProfile.user_id}
-          />
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center p-4">
+        <SendAnonymousMessage 
+          recipientUsername={publicProfile.username || ""}
+          recipientUserId={publicProfile.user_id || ""}
+        />
       </div>
     );
   }
@@ -441,12 +425,11 @@ export default function Profile() {
                 </div>
               )}
 
-              {/* Anonymous message option for viewing other profiles */}
-              {!isOwnProfile && user && publicProfile && (
-                <SendAnonymousMessage 
-                  recipientUsername={publicProfile.username}
-                  recipientUserId={publicProfile.user_id}
-                />
+              {/* Anonymous message link manager for own profile */}
+              {isOwnProfile && (
+                <div className="mt-6">
+                  <AnonymousLinkManager />
+                </div>
               )}
 
               {/* Share Buttons */}

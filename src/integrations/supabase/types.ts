@@ -14,11 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      anonymous_links: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          link_name: string
+          link_slug: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          link_name: string
+          link_slug: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          link_name?: string
+          link_slug?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       anonymous_messages: {
         Row: {
           created_at: string
           id: string
           is_read: boolean
+          link_id: string | null
           message: string
           recipient_user_id: string
         }
@@ -26,6 +60,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_read?: boolean
+          link_id?: string | null
           message: string
           recipient_user_id: string
         }
@@ -33,10 +68,19 @@ export type Database = {
           created_at?: string
           id?: string
           is_read?: boolean
+          link_id?: string | null
           message?: string
           recipient_user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "anonymous_messages_link_id_fkey"
+            columns: ["link_id"]
+            isOneToOne: false
+            referencedRelation: "anonymous_links"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
