@@ -145,78 +145,96 @@ export const SendAnonymousMessageByLink = () => {
   const remainingChars = 500 - message.length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5" />
-              Send Anonymous Message
-            </CardTitle>
-            <CardDescription>
-              Send an anonymous message to <strong>{linkData.link_name}</strong>
-              {linkData.description && (
-                <div className="mt-2 p-3 bg-muted rounded-md text-sm">
-                  {linkData.description}
+    <>
+      <div className="min-h-screen p-4 sm:p-6" style={{ background: 'var(--gradient-hero)' }}>
+        <div className="flex items-center justify-center min-h-full">
+          <div className="w-full max-w-md">
+            <Card className="shadow-lg border-0" style={{ 
+              background: 'var(--gradient-card)',
+              boxShadow: 'var(--shadow-medium)'
+            }}>
+              <CardHeader className="text-center pb-4">
+                <CardTitle className="flex items-center justify-center gap-2 text-xl">
+                  <div className="p-2 rounded-full bg-primary/10">
+                    <MessageSquare className="h-6 w-6 text-primary" />
+                  </div>
+                  Send Anonymous Message
+                </CardTitle>
+                <CardDescription className="text-base">
+                  Send an anonymous message to <span className="font-semibold text-primary break-words">{linkData.link_name}</span>
+                  {linkData.description && (
+                    <div className="mt-3 p-4 bg-secondary/10 rounded-lg text-sm border border-secondary/20">
+                      <div className="font-medium text-secondary mb-1">About this link:</div>
+                      <div className="text-foreground break-words">{linkData.description}</div>
+                    </div>
+                  )}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6 pt-0">
+                <div className="space-y-3">
+                  <Textarea
+                    placeholder="Type your anonymous message here..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    className="min-h-[140px] resize-none border-2 focus:border-primary/50 transition-colors"
+                    maxLength={500}
+                  />
+                  <div className="flex justify-between items-center">
+                    <span className={`text-sm font-medium ${remainingChars < 50 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                      {remainingChars} characters remaining
+                    </span>
+                  </div>
                 </div>
-              )}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Textarea
-                placeholder="Type your anonymous message here..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                className="min-h-[120px] resize-none"
-                maxLength={500}
-              />
-              <div className="flex justify-between items-center mt-2">
-                <span className={`text-xs ${remainingChars < 50 ? 'text-destructive' : 'text-muted-foreground'}`}>
-                  {remainingChars} characters remaining
-                </span>
-              </div>
-            </div>
-            
-            <Button 
-              onClick={handleSendMessage} 
-              disabled={sending || !message.trim()}
-              className="w-full"
-            >
-              {sending ? "Sending..." : "Send Anonymous Message"}
-            </Button>
+                
+                <Button 
+                  onClick={handleSendMessage} 
+                  disabled={sending || !message.trim()}
+                  className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90 transition-all duration-300 transform hover:scale-[1.02]"
+                  style={{ boxShadow: 'var(--shadow-soft)' }}
+                >
+                  {sending ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                      Sending...
+                    </div>
+                  ) : (
+                    "Send Anonymous Message"
+                  )}
+                </Button>
 
-            <div className="text-center">
-              <p className="text-xs text-muted-foreground">
-                Your message will be sent anonymously. The recipient won't know who sent it.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Dialog open={showSignupPrompt} onOpenChange={setShowSignupPrompt}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <UserPlus className="h-5 w-5" />
-                Create Your Account
-              </DialogTitle>
-              <DialogDescription className="text-left">
-                Your message has been sent successfully! Want to receive anonymous messages too? 
-                Create your account to get your own profile link and start receiving messages from others.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="flex gap-3 mt-4">
-              <Button variant="outline" onClick={() => setShowSignupPrompt(false)} className="flex-1">
-                Maybe later
-              </Button>
-              <Button onClick={handleCreateAccount} className="flex-1">
-                Create account
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+                <div className="text-center p-4 bg-accent/30 rounded-lg">
+                  <p className="text-sm text-muted-foreground">
+                    🤫 Your message will be sent anonymously. The recipient won't know who sent it.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
-    </div>
+
+      <Dialog open={showSignupPrompt} onOpenChange={setShowSignupPrompt}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserPlus className="h-5 w-5" />
+              Create Your Account
+            </DialogTitle>
+            <DialogDescription className="text-left">
+              Your message has been sent successfully! Want to receive anonymous messages too? 
+              Create your account to get your own profile link and start receiving messages from others.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3 mt-4">
+            <Button variant="outline" onClick={() => setShowSignupPrompt(false)} className="flex-1">
+              Maybe later
+            </Button>
+            <Button onClick={handleCreateAccount} className="flex-1">
+              Create account
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };

@@ -84,47 +84,64 @@ export const SendAnonymousMessage = ({ recipientUsername, recipientUserId }: Sen
 
   return (
     <>
-      <Card className="max-w-md mx-auto">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5" />
-            Send Anonymous Message
-          </CardTitle>
-          <CardDescription>
-            Send an anonymous message to {recipientUsername}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Textarea
-              placeholder="Type your anonymous message here..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className="min-h-[100px] resize-none"
-              maxLength={256}
-            />
-            <div className="flex justify-between items-center mt-2">
-              <span className={`text-xs ${remainingChars < 20 ? 'text-destructive' : 'text-muted-foreground'}`}>
-                {remainingChars} characters remaining
-              </span>
-            </div>
-          </div>
-          
-          <Button 
-            onClick={handleSendMessage} 
-            disabled={sending || !message.trim()}
-            className="w-full"
-          >
-            {sending ? "Sending..." : "Send Anonymous Message"}
-          </Button>
+      <div className="min-h-screen p-4 sm:p-6" style={{ background: 'var(--gradient-hero)' }}>
+        <div className="flex items-center justify-center min-h-full">
+          <Card className="max-w-md w-full shadow-lg border-0" style={{ 
+            background: 'var(--gradient-card)',
+            boxShadow: 'var(--shadow-medium)'
+          }}>
+            <CardHeader className="text-center pb-4">
+              <CardTitle className="flex items-center justify-center gap-2 text-xl">
+                <div className="p-2 rounded-full bg-primary/10">
+                  <MessageSquare className="h-6 w-6 text-primary" />
+                </div>
+                Send Anonymous Message
+              </CardTitle>
+              <CardDescription className="text-base">
+                Send an anonymous message to <span className="font-semibold text-primary">{recipientUsername}</span>
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6 pt-0">
+              <div className="space-y-3">
+                <Textarea
+                  placeholder="Type your anonymous message here..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="min-h-[120px] resize-none border-2 focus:border-primary/50 transition-colors"
+                  maxLength={256}
+                />
+                <div className="flex justify-between items-center">
+                  <span className={`text-sm font-medium ${remainingChars < 20 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                    {remainingChars} characters remaining
+                  </span>
+                </div>
+              </div>
+              
+              <Button 
+                onClick={handleSendMessage} 
+                disabled={sending || !message.trim()}
+                className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90 transition-all duration-300 transform hover:scale-[1.02]"
+                style={{ boxShadow: 'var(--shadow-soft)' }}
+              >
+                {sending ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                    Sending...
+                  </div>
+                ) : (
+                  "Send Anonymous Message"
+                )}
+              </Button>
 
-          <div className="text-center">
-            <p className="text-xs text-muted-foreground">
-              Your message will be sent anonymously. The recipient won't know who sent it.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+              <div className="text-center p-4 bg-accent/30 rounded-lg">
+                <p className="text-sm text-muted-foreground">
+                  🤫 Your message will be sent anonymously. The recipient won't know who sent it.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
       <Dialog open={showSignupPrompt} onOpenChange={setShowSignupPrompt}>
         <DialogContent className="max-w-md">

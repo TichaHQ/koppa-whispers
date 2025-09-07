@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Copy, Plus, Trash2, ExternalLink } from "lucide-react";
+import { Copy, Plus, Trash2, ExternalLink, MoreVertical, Eye, Link, ToggleLeft, ToggleRight } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -240,24 +241,85 @@ export const AnonymousLinkManager = () => {
           {links.map((link) => (
             <Card key={link.id}>
               <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      {link.link_name}
-                      <Badge variant={link.is_active ? "default" : "secondary"}>
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="flex flex-col sm:flex-row sm:items-center gap-2 break-words">
+                      <span className="break-words">{link.link_name}</span>
+                      <Badge variant={link.is_active ? "default" : "secondary"} className="self-start">
                         {link.is_active ? "Active" : "Inactive"}
                       </Badge>
                     </CardTitle>
                     {link.description && (
-                      <CardDescription>{link.description}</CardDescription>
+                      <CardDescription className="mt-2 break-words">{link.description}</CardDescription>
                     )}
                   </div>
-                  <div className="flex gap-2">
+                  
+                  {/* Mobile Actions */}
+                  <div className="flex flex-col sm:hidden gap-2 w-full">
+                    <div className="flex gap-2">
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => window.open(`/link-messages/${link.id}`, '_blank')}
+                        className="flex-1"
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        View Messages
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => copyLinkToClipboard(link.link_slug)}
+                        className="flex-1"
+                      >
+                        <Copy className="h-4 w-4 mr-1" />
+                        Copy Link
+                      </Button>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm" className="w-full">
+                          <MoreVertical className="h-4 w-4 mr-2" />
+                          More Actions
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={() => window.open(`/message/${link.link_slug}`, '_blank')}>
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          Open Link
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => toggleLinkStatus(link.id, link.is_active)}>
+                          {link.is_active ? (
+                            <>
+                              <ToggleLeft className="h-4 w-4 mr-2" />
+                              Deactivate
+                            </>
+                          ) : (
+                            <>
+                              <ToggleRight className="h-4 w-4 mr-2" />
+                              Activate
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => deleteLink(link.id)}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete Link
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+
+                  {/* Desktop Actions */}
+                  <div className="hidden sm:flex gap-2 flex-shrink-0">
                     <Button
                       variant="default"
                       size="sm"
                       onClick={() => window.open(`/link-messages/${link.id}`, '_blank')}
                     >
+                      <Eye className="h-4 w-4 mr-1" />
                       View Messages
                     </Button>
                     <Button
@@ -267,33 +329,48 @@ export const AnonymousLinkManager = () => {
                     >
                       <Copy className="h-4 w-4" />
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => window.open(`/message/${link.link_slug}`, '_blank')}
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => toggleLinkStatus(link.id, link.is_active)}
-                    >
-                      {link.is_active ? "Deactivate" : "Activate"}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => deleteLink(link.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => window.open(`/message/${link.link_slug}`, '_blank')}>
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          Open Link
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => toggleLinkStatus(link.id, link.is_active)}>
+                          {link.is_active ? (
+                            <>
+                              <ToggleLeft className="h-4 w-4 mr-2" />
+                              Deactivate
+                            </>
+                          ) : (
+                            <>
+                              <ToggleRight className="h-4 w-4 mr-2" />
+                              Activate
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => deleteLink(link.id)}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete Link
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-sm text-muted-foreground">
-                  <strong>Link:</strong> {window.location.origin}/message/{link.link_slug}
+                  <strong>Link:</strong> 
+                  <span className="break-all ml-1">
+                    {window.location.origin}/message/{link.link_slug}
+                  </span>
                 </div>
               </CardContent>
             </Card>
