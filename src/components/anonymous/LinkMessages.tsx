@@ -90,24 +90,6 @@ export const LinkMessages = () => {
     }
   };
 
-  const markAsRead = async (messageId: string) => {
-    try {
-      const { error } = await supabase
-        .from('anonymous_messages')
-        .update({ is_read: true })
-        .eq('id', messageId);
-
-      if (error) throw error;
-
-      setMessages(prev => 
-        prev.map(msg => 
-          msg.id === messageId ? { ...msg, is_read: true } : msg
-        )
-      );
-    } catch (error) {
-      console.error('Error marking message as read:', error);
-    }
-  };
 
   if (loading) {
     return (
@@ -126,14 +108,14 @@ export const LinkMessages = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-hero p-4">
-      <div className="max-w-2xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-hero p-2 sm:p-4">
+      <div className="w-full max-w-2xl mx-auto space-y-4 sm:space-y-6 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
           <Button
             variant="outline"
             onClick={() => navigate('/profile')}
-            className="border-primary/20 text-primary hover:bg-primary/10"
+            className="border-primary/20 text-primary hover:bg-primary/10 w-full sm:w-auto"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Profile
@@ -153,7 +135,7 @@ export const LinkMessages = () => {
               )}
             </CardHeader>
             <CardContent>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-xs sm:text-sm text-muted-foreground break-all">
                 <strong>Link:</strong> {window.location.origin}/message/{link.link_slug}
               </div>
               <div className="mt-2">
@@ -166,13 +148,13 @@ export const LinkMessages = () => {
         )}
 
         {/* Messages */}
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {messages.length === 0 ? (
             <Card className="bg-gradient-card border-0 shadow-glow">
-              <CardContent className="py-8 text-center">
-                <MessageSquare className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <p className="text-muted-foreground">No messages received for this link yet.</p>
-                <p className="text-sm text-muted-foreground mt-2">
+              <CardContent className="py-6 sm:py-8 text-center px-4">
+                <MessageSquare className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-4 text-muted-foreground" />
+                <p className="text-muted-foreground text-sm sm:text-base">No messages received for this link yet.</p>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-2">
                   Share your link to start receiving anonymous messages!
                 </p>
               </CardContent>
@@ -181,16 +163,14 @@ export const LinkMessages = () => {
             messages.map((message) => (
               <Card 
                 key={message.id} 
-                className={`bg-gradient-card border-0 shadow-glow transition-all duration-200 ${
-                  !message.is_read ? 'ring-2 ring-primary/20' : ''
-                }`}
+                className="bg-gradient-card border-0 shadow-glow"
               >
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <CardTitle className="text-sm font-medium">
+                <CardHeader className="pb-2 px-3 sm:px-6">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2">
                       Anonymous Message
                       {!message.is_read && (
-                        <Badge variant="default" className="ml-2">New</Badge>
+                        <Badge variant="default" className="text-xs">New</Badge>
                       )}
                     </CardTitle>
                     <span className="text-xs text-muted-foreground">
@@ -198,19 +178,10 @@ export const LinkMessages = () => {
                     </span>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm mb-3 leading-relaxed">
+                <CardContent className="pt-0 px-3 sm:px-6">
+                  <p className="text-sm leading-relaxed break-words">
                     {message.message}
                   </p>
-                  {!message.is_read && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => markAsRead(message.id)}
-                    >
-                      Mark as read
-                    </Button>
-                  )}
                 </CardContent>
               </Card>
             ))
