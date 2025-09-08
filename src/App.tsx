@@ -9,6 +9,7 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import MessageLink from "./pages/MessageLink";
 import LinkMessages from "./pages/LinkMessages";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
         <Route path="/profile/:username" element={<Profile />} />
         <Route path="/message/:slug" element={<MessageLink />} />
         <Route path="/link-messages/:linkId" element={<LinkMessages />} />
+        <Route path="/admin" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
