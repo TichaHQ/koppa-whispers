@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { MessageModal } from "@/components/ui/message-modal";
 
 interface AnonymousMessage {
   id: string;
@@ -21,6 +22,7 @@ interface AnonymousMessagesProps {
 export const AnonymousMessages = ({ onBack }: AnonymousMessagesProps) => {
   const [messages, setMessages] = useState<AnonymousMessage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedMessage, setSelectedMessage] = useState<AnonymousMessage | null>(null);
   const { user, profile } = useAuth();
 
   useEffect(() => {
@@ -111,16 +113,14 @@ export const AnonymousMessages = ({ onBack }: AnonymousMessagesProps) => {
       ) : (
         <div className="space-y-3 sm:space-y-4 mx-2 sm:mx-0">
           {messages.map((message) => (
-            <Card key={message.id}>
-              <CardHeader className="pb-2 px-3 sm:px-6">
-                <div className="flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Profile message</span>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0 px-3 sm:px-6">
-                <p className="text-foreground whitespace-pre-wrap mb-3 text-sm leading-relaxed break-words">{message.message}</p>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <Card 
+              key={message.id}
+              className="cursor-pointer hover:shadow-md transition-all"
+              onClick={() => setSelectedMessage(message)}
+            >
+              <CardContent className="p-4">
+                <p className="text-foreground text-sm leading-relaxed break-words line-clamp-3">{message.message}</p>
+                <div className="flex items-center gap-1 text-xs text-muted-foreground mt-3">
                   <Clock className="h-3 w-3" />
                   {format(new Date(message.created_at), 'MMM d, yyyy h:mm a')}
                 </div>
@@ -146,6 +146,15 @@ export const AnonymousMessages = ({ onBack }: AnonymousMessagesProps) => {
           </p>
         </div>
       </div>
+      
+      {selectedMessage && (
+        <MessageModal
+          isOpen={!!selectedMessage}
+          onClose={() => setSelectedMessage(null)}
+          message={selectedMessage}
+          title="Profile Message"
+        />
+      )}
     </div>
   );
 };

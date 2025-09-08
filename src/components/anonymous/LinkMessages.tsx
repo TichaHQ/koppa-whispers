@@ -7,6 +7,7 @@ import { ArrowLeft, MessageSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { MessageModal } from "@/components/ui/message-modal";
 
 interface AnonymousMessage {
   id: string;
@@ -29,6 +30,7 @@ export const LinkMessages = () => {
   const [messages, setMessages] = useState<AnonymousMessage[]>([]);
   const [link, setLink] = useState<AnonymousLink | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedMessage, setSelectedMessage] = useState<AnonymousMessage | null>(null);
 
   useEffect(() => {
     if (user && linkId) {
@@ -163,31 +165,31 @@ export const LinkMessages = () => {
             messages.map((message) => (
               <Card 
                 key={message.id} 
-                className="bg-gradient-card border-0 shadow-glow"
+                className="bg-gradient-card border-0 shadow-glow cursor-pointer hover:shadow-elegant transition-all"
+                onClick={() => setSelectedMessage(message)}
               >
-                <CardHeader className="pb-2 px-3 sm:px-6">
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
-                    <CardTitle className="text-sm font-medium flex items-center gap-2">
-                      Anonymous Message
-                      {!message.is_read && (
-                        <Badge variant="default" className="text-xs">New</Badge>
-                      )}
-                    </CardTitle>
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(message.created_at).toLocaleDateString()} {new Date(message.created_at).toLocaleTimeString()}
-                    </span>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0 px-3 sm:px-6">
-                  <p className="text-sm leading-relaxed break-words">
+                <CardContent className="p-4">
+                  <p className="text-sm leading-relaxed break-words line-clamp-3">
                     {message.message}
                   </p>
+                  <div className="mt-3 text-xs text-muted-foreground">
+                    {new Date(message.created_at).toLocaleDateString()} • {new Date(message.created_at).toLocaleTimeString()}
+                  </div>
                 </CardContent>
               </Card>
             ))
           )}
         </div>
       </div>
+      
+      {selectedMessage && (
+        <MessageModal
+          isOpen={!!selectedMessage}
+          onClose={() => setSelectedMessage(null)}
+          message={selectedMessage}
+          title={link?.link_name || "Anonymous Message"}
+        />
+      )}
     </div>
   );
 };
