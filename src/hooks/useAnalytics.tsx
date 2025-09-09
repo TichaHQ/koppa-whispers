@@ -47,7 +47,7 @@ export const useAnalytics = (timeFrame: TimeFrame = 'daily', filters: AnalyticsF
         }
 
         // Get total users with filters
-        const { count: totalUsers, error: totalError } = await profilesQuery;
+        const { data: profilesData, error: totalError, count: totalUsers } = await profilesQuery;
         if (totalError) throw totalError;
 
         // Get active users (last 5 minutes)
@@ -58,12 +58,9 @@ export const useAnalytics = (timeFrame: TimeFrame = 'daily', filters: AnalyticsF
           .gte('last_seen', fiveMinutesAgo);
 
         // Apply filters to active users by joining with profiles
-        if (Object.keys(filters).length > 0) {
-          const { data: filteredProfiles } = await profilesQuery.select('user_id');
-          if (filteredProfiles) {
-            const userIds = filteredProfiles.map(p => p.user_id);
-            sessionsQuery = sessionsQuery.in('user_id', userIds);
-          }
+        if (Object.keys(filters).length > 0 && profilesData) {
+          const userIds = profilesData.map(p => p.user_id);
+          sessionsQuery = sessionsQuery.in('user_id', userIds);
         }
 
         const { count: activeUsers, error: activeError } = await sessionsQuery;
@@ -100,12 +97,9 @@ export const useAnalytics = (timeFrame: TimeFrame = 'daily', filters: AnalyticsF
           .order('created_at', { ascending: true });
 
         // Apply filters for visitors
-        if (Object.keys(filters).length > 0) {
-          const { data: filteredProfiles } = await profilesQuery.select('user_id');
-          if (filteredProfiles) {
-            const userIds = filteredProfiles.map(p => p.user_id);
-            visitorQuery = visitorQuery.in('user_id', userIds);
-          }
+        if (Object.keys(filters).length > 0 && profilesData) {
+          const userIds = profilesData.map(p => p.user_id);
+          visitorQuery = visitorQuery.in('user_id', userIds);
         }
 
         const { data: visitorSessions, error: visitorError } = await visitorQuery;
@@ -134,7 +128,7 @@ export const useAnalytics = (timeFrame: TimeFrame = 'daily', filters: AnalyticsF
           .select('batch, stream, state_of_deployment, year_of_deployment');
 
         setData({
-          totalUsers: totalUsers || 0,
+          totalUsers: profilesData?.length || 0,
           activeUsers: activeUsers || 0,
           visitors,
           uniqueBatches: allBatches,
