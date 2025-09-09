@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import MessageLink from "./pages/MessageLink";
 import LinkMessages from "./pages/LinkMessages";
 import Admin from "./pages/Admin";
+import { ProtectedAdmin } from "./components/admin/ProtectedAdmin";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
         <Route path="/message/:slug" element={<MessageLink />} />
         <Route path="/link-messages/:linkId" element={<LinkMessages />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/:username/admin" element={<ProtectedAdmin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

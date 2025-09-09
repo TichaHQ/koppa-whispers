@@ -118,7 +118,7 @@ export const useAnalytics = (timeFrame: TimeFrame = 'daily', filters: AnalyticsF
         const allStates = [
           'Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa',
           'Benue', 'Borno', 'Cross River', 'Delta', 'Ebonyi', 'Edo',
-          'Ekiti', 'Enugu', 'Gombe', 'Imo', 'Jigawa', 'Kaduna',
+          'Ekiti', 'Enugu', 'FCT', 'Gombe', 'Imo', 'Jigawa', 'Kaduna',
           'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara', 'Lagos',
           'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun', 'Oyo',
           'Plateau', 'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara'
@@ -126,7 +126,7 @@ export const useAnalytics = (timeFrame: TimeFrame = 'daily', filters: AnalyticsF
 
         const allBatches = ['A', 'B', 'C'];
         const allStreams = ['1', '2'];
-        const allYears = Array.from({ length: 91 }, (_, i) => 2010 + i); // 2010-2100
+        const allYears = Array.from({ length: 76 }, (_, i) => 2025 + i); // 2025-2100
 
         // Get actual data for comparison but use predefined options
         const { data: allProfiles } = await supabase
@@ -140,7 +140,7 @@ export const useAnalytics = (timeFrame: TimeFrame = 'daily', filters: AnalyticsF
           uniqueBatches: allBatches,
           uniqueStreams: allStreams,
           uniqueStates: allStates,
-          uniqueYears: allYears.reverse(), // Latest years first
+          uniqueYears: allYears, // Ascending order from 2025
         });
 
       } catch (err) {

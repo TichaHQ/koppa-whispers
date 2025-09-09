@@ -32,9 +32,6 @@ export const AdminNav = () => {
           </Button>
         </div>
       </div>
-      <p className="text-muted-foreground mt-2">
-        Direct link: <code className="bg-muted px-2 py-1 rounded text-sm">{window.location.origin}/admin</code>
-      </p>
     </Card>
   );
 };
