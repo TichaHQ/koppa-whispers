@@ -42,9 +42,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Fetch profile data
+          // Fetch profile data and update session
           setTimeout(() => {
             fetchProfile(session.user.id);
+            updateUserSession();
           }, 0);
         } else {
           setProfile(null);
@@ -61,6 +62,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       
       if (session?.user) {
         fetchProfile(session.user.id);
+        updateUserSession();
       }
       
       setLoading(false);
@@ -85,6 +87,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setProfile(data);
     } catch (error) {
       console.error('Error fetching profile:', error);
+    }
+  };
+
+  const updateUserSession = async () => {
+    try {
+      await supabase.rpc('update_user_session');
+    } catch (error) {
+      console.error('Error updating user session:', error);
     }
   };
 

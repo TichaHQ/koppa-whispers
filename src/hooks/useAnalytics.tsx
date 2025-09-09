@@ -120,7 +120,7 @@ export const useAnalytics = (timeFrame: TimeFrame = 'daily', filters: AnalyticsF
 
         const allBatches = ['A', 'B', 'C'];
         const allStreams = ['1', '2'];
-        const allYears = Array.from({ length: 76 }, (_, i) => 2025 + i); // 2025-2100
+        const allYears = Array.from({ length: 78 }, (_, i) => 2023 + i); // 2023-2100
 
         // Get actual data for comparison but use predefined options
         const { data: allProfiles } = await supabase
