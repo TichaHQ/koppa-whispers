@@ -5,14 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Users, Activity, BarChart3, Shield, X } from 'lucide-react';
+import { Users, Activity, BarChart3, Shield, X, RefreshCw } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AdminNav } from './AdminNav';
 
 export const AdminDashboard = () => {
   const { isAdmin, loading: adminLoading } = useAdmin();
   const [timeFrame, setTimeFrame] = useState<TimeFrame>('daily');
   const [filters, setFilters] = useState<AnalyticsFilters>({});
-  const { data, loading, error } = useAnalytics(timeFrame, filters);
+  const { data, loading, error, refetch } = useAnalytics(timeFrame, filters);
 
   if (adminLoading) {
     return (
@@ -57,14 +58,27 @@ export const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5">
       <div className="container mx-auto p-6 space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Admin Dashboard
-          </h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Monitor your webapp's performance, user engagement, and growth metrics
-          </p>
+        <AdminNav />
+        
+        {/* Header with refresh button */}
+        <div className="flex items-center justify-between">
+          <div className="text-center space-y-4 flex-1">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              Real-time Analytics Dashboard
+            </h1>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Monitor your webapp's performance, user engagement, and growth metrics in real-time
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => refetch()}
+            disabled={loading}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
         </div>
 
         {/* Filters */}

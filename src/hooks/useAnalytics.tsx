@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export type TimeFrame = 'daily' | 'weekly' | 'monthly' | 'yearly';
@@ -25,8 +25,7 @@ export const useAnalytics = (timeFrame: TimeFrame = 'daily', filters: AnalyticsF
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
       setLoading(true);
       setError(null);
 
@@ -115,24 +114,33 @@ export const useAnalytics = (timeFrame: TimeFrame = 'daily', filters: AnalyticsF
         // Process visitor data based on timeframe
         const visitors = processVisitorData(visitorSessions || [], timeFrame);
 
-        // Get unique filter options
+        // Define comprehensive filter options
+        const allStates = [
+          'Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa',
+          'Benue', 'Borno', 'Cross River', 'Delta', 'Ebonyi', 'Edo',
+          'Ekiti', 'Enugu', 'Gombe', 'Imo', 'Jigawa', 'Kaduna',
+          'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara', 'Lagos',
+          'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun', 'Oyo',
+          'Plateau', 'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara'
+        ];
+
+        const allBatches = ['A', 'B', 'C'];
+        const allStreams = ['1', '2'];
+        const allYears = Array.from({ length: 91 }, (_, i) => 2010 + i); // 2010-2100
+
+        // Get actual data for comparison but use predefined options
         const { data: allProfiles } = await supabase
           .from('profiles')
           .select('batch, stream, state_of_deployment, year_of_deployment');
-
-        const uniqueBatches = [...new Set(allProfiles?.map(p => p.batch).filter(Boolean))] as string[];
-        const uniqueStreams = [...new Set(allProfiles?.map(p => p.stream).filter(Boolean))] as string[];
-        const uniqueStates = [...new Set(allProfiles?.map(p => p.state_of_deployment).filter(Boolean))] as string[];
-        const uniqueYears = [...new Set(allProfiles?.map(p => p.year_of_deployment).filter(Boolean))] as number[];
 
         setData({
           totalUsers: totalUsers || 0,
           activeUsers: activeUsers || 0,
           visitors,
-          uniqueBatches,
-          uniqueStreams,
-          uniqueStates,
-          uniqueYears: uniqueYears.sort((a, b) => b - a),
+          uniqueBatches: allBatches,
+          uniqueStreams: allStreams,
+          uniqueStates: allStates,
+          uniqueYears: allYears.reverse(), // Latest years first
         });
 
       } catch (err) {
@@ -140,12 +148,35 @@ export const useAnalytics = (timeFrame: TimeFrame = 'daily', filters: AnalyticsF
       } finally {
         setLoading(false);
       }
-    };
+    }, [timeFrame, filters]);
 
+  useEffect(() => {
     fetchAnalytics();
-  }, [timeFrame, JSON.stringify(filters)]);
 
-  return { data, loading, error };
+    // Set up real-time subscriptions
+    const profilesChannel = supabase
+      .channel('analytics-profiles')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'profiles' },
+        () => fetchAnalytics()
+      )
+      .subscribe();
+
+    const sessionsChannel = supabase
+      .channel('analytics-sessions')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'user_sessions' },
+        () => fetchAnalytics()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(profilesChannel);
+      supabase.removeChannel(sessionsChannel);
+    };
+  }, [fetchAnalytics]);
+
+  return { data, loading, error, refetch: fetchAnalytics };
 };
 
 const processVisitorData = (sessions: { created_at: string }[], timeFrame: TimeFrame) => {
