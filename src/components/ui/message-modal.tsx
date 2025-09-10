@@ -1,10 +1,7 @@
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
-import { MessageSquare } from "lucide-react";
 import { format } from "date-fns";
 
 interface MessageModalProps {
@@ -20,29 +17,37 @@ interface MessageModalProps {
 export const MessageModal = ({ isOpen, onClose, message, title }: MessageModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-sm w-full aspect-square bg-gradient-card border-0 shadow-elegant rounded-2xl p-6 flex flex-col justify-center">
-        <div className="text-center space-y-6">
-          {/* App Branding */}
-          <div className="mb-4">
-            <h2 className="text-lg font-bold text-primary tracking-wide">KOPPA WHISPER</h2>
-            <div className="w-16 h-0.5 bg-gradient-to-r from-primary to-primary/50 mx-auto mt-2"></div>
-          </div>
+      <DialogContent className="max-w-md w-full bg-white border-0 shadow-elegant rounded-2xl p-0 overflow-hidden">
+        {/* Green Header Section */}
+        <div className="bg-gradient-primary px-6 py-8 text-center">
+          <h1 className="text-2xl font-bold text-white">
+            Koppa<span className="text-yellow-300">Whisper</span>
+          </h1>
+        </div>
 
-          {/* Message Source */}
-          <div className="flex items-center justify-center gap-2 text-foreground/80">
-            <MessageSquare className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium">{title}</span>
+        {/* Content Section */}
+        <div className="px-6 py-8 text-center space-y-6">
+          {/* Link Name/Question */}
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800 uppercase tracking-wide leading-tight">
+              {title}
+            </h2>
           </div>
 
           {/* Message Content */}
-          <div className="bg-background/30 rounded-xl p-4 border border-primary/10">
-            <p className="text-foreground font-bold text-base leading-relaxed break-words text-center">
+          <div className="bg-gray-50 rounded-lg p-6 my-6">
+            <p className="text-gray-800 text-lg leading-relaxed break-words">
               "{message.message}"
             </p>
           </div>
 
+          {/* Anonymous Message Label */}
+          <div className="text-gray-600 text-lg font-medium">
+            anonymous message
+          </div>
+
           {/* Timestamp */}
-          <div className="text-xs text-muted-foreground/70 text-center">
+          <div className="text-sm text-gray-500 mt-4">
             {format(new Date(message.created_at), 'MMMM d, yyyy • h:mm a')}
           </div>
         </div>
