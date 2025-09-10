@@ -8,6 +8,8 @@ interface AuthContextType {
   session: Session | null;
   profile: any | null;
   loading: boolean;
+  isNewUser: boolean;
+  clearNewUser: () => void;
   signUp: (username: string, password: string) => Promise<{ error: any }>;
   signIn: (username: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
@@ -33,6 +35,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isNewUser, setIsNewUser] = useState(false);
 
   useEffect(() => {
     // Set up auth state listener
@@ -98,6 +101,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  const clearNewUser = () => {
+    setIsNewUser(false);
+  };
+
   const signUp = async (username: string, password: string) => {
     try {
       const redirectUrl = `${window.location.origin}/profile`;
@@ -124,6 +131,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         title: "Account created successfully!",
         description: "You've been automatically signed in.",
       });
+
+      // Mark as new user to show welcome dialog
+      setIsNewUser(true);
 
       return { error: null };
     } catch (error) {
@@ -210,6 +220,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     session,
     profile,
     loading,
+    isNewUser,
+    clearNewUser,
     signUp,
     signIn,
     signOut,

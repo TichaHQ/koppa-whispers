@@ -12,6 +12,7 @@ import { toast } from "@/hooks/use-toast";
 import { Dashboard } from "@/components/dashboard/Dashboard";
 import { SendAnonymousMessage } from "@/components/anonymous/SendAnonymousMessage";
 import { AnonymousLinkManager } from "@/components/anonymous/AnonymousLinkManager";
+import { WelcomeDialog } from "@/components/ui/welcome-dialog";
 
 const nigerianStates = [
   "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
@@ -24,12 +25,13 @@ const nigerianStates = [
 export default function Profile() {
   const { username } = useParams();
   const navigate = useNavigate();
-  const { user, profile, loading, updateProfile, signOut } = useAuth();
+  const { user, profile, loading, updateProfile, signOut, isNewUser, clearNewUser } = useAuth();
   
   const [isEditing, setIsEditing] = useState(false);
   const [publicProfile, setPublicProfile] = useState<any>(null);
   const [loadingPublicProfile, setLoadingPublicProfile] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+  const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
   const [formData, setFormData] = useState({
     batch: '',
     stream: '',
@@ -62,7 +64,12 @@ export default function Profile() {
     if (username && !isOwnProfile) {
       fetchPublicProfile(username);
     }
-  }, [user, profile, loading, navigate, username, isOwnProfile]);
+
+    // Show welcome dialog for new users
+    if (isNewUser && isOwnProfile && profile) {
+      setShowWelcomeDialog(true);
+    }
+  }, [user, profile, loading, navigate, username, isOwnProfile, isNewUser]);
 
   const fetchPublicProfile = async (targetUsername: string) => {
     setLoadingPublicProfile(true);
@@ -173,6 +180,17 @@ export default function Profile() {
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
+  };
+
+  const handleCompleteProfile = () => {
+    setShowWelcomeDialog(false);
+    setIsEditing(true);
+    clearNewUser();
+  };
+
+  const handleSkipProfile = () => {
+    setShowWelcomeDialog(false);
+    clearNewUser();
   };
 
   if (loading || loadingPublicProfile) {
@@ -473,6 +491,14 @@ export default function Profile() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Welcome Dialog for new users */}
+        <WelcomeDialog
+          open={showWelcomeDialog}
+          onComplete={handleCompleteProfile}
+          onSkip={handleSkipProfile}
+          username={profile?.username || ''}
+        />
       </div>
     </div>
   );
