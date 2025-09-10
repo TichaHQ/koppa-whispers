@@ -92,84 +92,78 @@ export const MessageModal = ({ isOpen, onClose, message, title }: MessageModalPr
   };
 
   return (
-    <>
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-md w-full bg-white border-0 shadow-elegant rounded-2xl p-0 overflow-hidden">
-          <div ref={modalRef}>
-            {/* Green Header Section */}
-            <div className="bg-gradient-primary px-6 py-8 text-center">
-              <h1 className="text-2xl font-bold text-white">
-                Koppa<span className="text-yellow-300">Whisper</span>
-              </h1>
-            </div>
-
-            {/* Content Section */}
-            <div className="px-6 py-8 text-center space-y-6">
-              {/* Link Name/Question */}
-              <div>
-                <h2 className="text-2xl font-bold text-gray-800 uppercase tracking-wide leading-tight">
-                  {title}
-                </h2>
-              </div>
-
-              {/* Message Content */}
-              <div className="bg-gray-50 rounded-lg p-6 my-6">
-                <p className="text-gray-800 text-lg leading-relaxed break-words">
-                  "{message.message}"
-                </p>
-              </div>
-
-              {/* Anonymous Message Label */}
-              <div className="text-gray-600 text-lg font-medium">
-                anonymous message
-              </div>
-
-              {/* Timestamp */}
-              <div className="text-sm text-gray-500 mt-4">
-                {format(new Date(message.created_at), 'MMMM d, yyyy • h:mm a')}
-              </div>
-            </div>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-md w-full bg-white border-0 shadow-elegant rounded-2xl p-0 overflow-hidden">
+        <div ref={modalRef}>
+          {/* Green Header Section */}
+          <div className="bg-gradient-primary px-6 py-8 text-center">
+            <h1 className="text-2xl font-bold text-white">
+              Koppa<span className="text-yellow-300">Whisper</span>
+            </h1>
           </div>
-        </DialogContent>
-      </Dialog>
-      
-      {/* Share Button - Positioned below modal */}
-      {isOpen && (
-        <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-50">
-          <div className="mt-80 pointer-events-auto">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="default" size="lg" className="shadow-lg bg-gradient-primary hover:opacity-90 transition-opacity">
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Share Whisper
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className="w-56">
-                <DropdownMenuItem onClick={() => captureAndShare('whatsapp')}>
-                  <MessageCircle className="h-4 w-4 mr-2 text-green-600" />
-                  WhatsApp
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => captureAndShare('whatsapp-business')}>
-                  <MessageCircle className="h-4 w-4 mr-2 text-green-700" />
-                  WhatsApp Business
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => captureAndShare('facebook')}>
-                  <MessageCircle className="h-4 w-4 mr-2 text-blue-600" />
-                  Facebook
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => captureAndShare('instagram')}>
-                  <MessageCircle className="h-4 w-4 mr-2 text-pink-600" />
-                  Instagram
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => captureAndShare('twitter')}>
-                  <MessageCircle className="h-4 w-4 mr-2 text-blue-500" />
-                  Twitter
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+
+          {/* Content Section */}
+          <div className="px-6 py-8 text-center space-y-6">
+            {/* Link Name/Question */}
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 uppercase tracking-wide leading-tight">
+                {title}
+              </h2>
+            </div>
+
+            {/* Message Content */}
+            <div className="bg-gray-50 rounded-lg p-6 my-6">
+              <p className="text-gray-800 text-lg leading-relaxed break-words">
+                "{message.message}"
+              </p>
+            </div>
+
+            {/* Anonymous Message Label */}
+            <div className="text-gray-600 text-lg font-medium">
+              anonymous message
+            </div>
+
+            {/* Timestamp */}
+            <div className="text-sm text-gray-500 mt-4">
+              {format(new Date(message.created_at), 'MMMM d, yyyy • h:mm a')}
+            </div>
           </div>
         </div>
-      )}
-    </>
+        
+        {/* Share Button - Inside modal at bottom */}
+        <div className="px-6 pb-6">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="default" size="lg" className="w-full shadow-lg bg-gradient-primary hover:opacity-90 transition-opacity">
+                <Share2 className="h-4 w-4 mr-2" />
+                Share Whisper
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center" className="w-56">
+              <DropdownMenuItem onClick={() => captureAndShare('whatsapp')}>
+                <MessageCircle className="h-4 w-4 mr-2 text-green-600" />
+                WhatsApp
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => captureAndShare('whatsapp-business')}>
+                <MessageCircle className="h-4 w-4 mr-2 text-green-700" />
+                WhatsApp Business
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => captureAndShare('facebook')}>
+                <MessageCircle className="h-4 w-4 mr-2 text-blue-600" />
+                Facebook
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => captureAndShare('instagram')}>
+                <MessageCircle className="h-4 w-4 mr-2 text-pink-600" />
+                Instagram
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => captureAndShare('twitter')}>
+                <MessageCircle className="h-4 w-4 mr-2 text-blue-500" />
+                Twitter
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
