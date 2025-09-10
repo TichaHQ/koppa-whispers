@@ -17,13 +17,10 @@ export const WelcomeDialog = ({ open, onComplete, onSkip, username }: WelcomeDia
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center space-y-3">
             <p>
-              Your account has been created successfully! You're now part of the NYSC corps community.
-            </p>
-            <p>
-              To help fellow corps connect with you and send anonymous messages, we recommend completing your profile with details like your batch, stream, year, and state of deployment.
+              Congratulations! you're now a Whisperer! 🌟 Your details remain completely anonymous, but completing your profile helps us serve you better.
             </p>
             <p className="font-medium text-primary">
-              Would you like to complete your profile now?
+              Would you like to do that now?
             </p>
           </AlertDialogDescription>
         </AlertDialogHeader>
