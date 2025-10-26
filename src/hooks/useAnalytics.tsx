@@ -50,20 +50,28 @@ export const useAnalytics = (timeFrame: TimeFrame = 'daily', filters: AnalyticsF
         const { data: profilesData, error: totalError, count: totalUsers } = await profilesQuery;
         if (totalError) throw totalError;
 
-        // Get active users (last 5 minutes)
+        // Get active users (signed in within last 5 minutes based on last_sign_in_at)
         const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-        let sessionsQuery = supabase
-          .from('user_sessions')
-          .select('user_id')
-          .gte('last_seen', fiveMinutesAgo);
+        let activeUsersQuery = supabase
+          .from('profiles')
+          .select('user_id', { count: 'exact', head: true })
+          .gte('last_sign_in_at', fiveMinutesAgo);
 
-        // Apply filters to active users by joining with profiles
-        if (Object.keys(filters).length > 0 && profilesData) {
-          const userIds = profilesData.map(p => p.user_id);
-          sessionsQuery = sessionsQuery.in('user_id', userIds);
+        // Apply filters to active users
+        if (filters.batch) {
+          activeUsersQuery = activeUsersQuery.eq('batch', filters.batch);
+        }
+        if (filters.stream) {
+          activeUsersQuery = activeUsersQuery.eq('stream', filters.stream);
+        }
+        if (filters.state) {
+          activeUsersQuery = activeUsersQuery.eq('state_of_deployment', filters.state);
+        }
+        if (filters.year) {
+          activeUsersQuery = activeUsersQuery.eq('year_of_deployment', filters.year);
         }
 
-        const { count: activeUsers, error: activeError } = await sessionsQuery;
+        const { count: activeUsers, error: activeError } = await activeUsersQuery;
         if (activeError) throw activeError;
 
         // Get visitor data based on timeframe
@@ -91,22 +99,31 @@ export const useAnalytics = (timeFrame: TimeFrame = 'daily', filters: AnalyticsF
 
         const startDate = getDateRange();
         let visitorQuery = supabase
-          .from('user_sessions')
-          .select('created_at')
-          .gte('created_at', startDate)
-          .order('created_at', { ascending: true });
+          .from('profiles')
+          .select('last_sign_in_at')
+          .gte('last_sign_in_at', startDate)
+          .not('last_sign_in_at', 'is', null)
+          .order('last_sign_in_at', { ascending: true });
 
         // Apply filters for visitors
-        if (Object.keys(filters).length > 0 && profilesData) {
-          const userIds = profilesData.map(p => p.user_id);
-          visitorQuery = visitorQuery.in('user_id', userIds);
+        if (filters.batch) {
+          visitorQuery = visitorQuery.eq('batch', filters.batch);
+        }
+        if (filters.stream) {
+          visitorQuery = visitorQuery.eq('stream', filters.stream);
+        }
+        if (filters.state) {
+          visitorQuery = visitorQuery.eq('state_of_deployment', filters.state);
+        }
+        if (filters.year) {
+          visitorQuery = visitorQuery.eq('year_of_deployment', filters.year);
         }
 
-        const { data: visitorSessions, error: visitorError } = await visitorQuery;
+        const { data: visitorData, error: visitorError } = await visitorQuery;
         if (visitorError) throw visitorError;
 
         // Process visitor data based on timeframe
-        const visitors = processVisitorData(visitorSessions || [], timeFrame);
+        const visitors = processVisitorData(visitorData || [], timeFrame);
 
         // Define comprehensive filter options
         const allStates = [
@@ -173,11 +190,12 @@ export const useAnalytics = (timeFrame: TimeFrame = 'daily', filters: AnalyticsF
   return { data, loading, error, refetch: fetchAnalytics };
 };
 
-const processVisitorData = (sessions: { created_at: string }[], timeFrame: TimeFrame) => {
+const processVisitorData = (sessions: { last_sign_in_at: string | null }[], timeFrame: TimeFrame) => {
   const visitorMap = new Map<string, number>();
 
   sessions.forEach(session => {
-    const date = new Date(session.created_at);
+    if (!session.last_sign_in_at) return;
+    const date = new Date(session.last_sign_in_at);
     let key: string;
 
     switch (timeFrame) {

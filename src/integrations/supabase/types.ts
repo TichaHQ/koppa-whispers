@@ -88,6 +88,7 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          last_sign_in_at: string | null
           state_of_deployment: string | null
           stream: string | null
           updated_at: string
@@ -100,6 +101,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          last_sign_in_at?: string | null
           state_of_deployment?: string | null
           stream?: string | null
           updated_at?: string
@@ -112,6 +114,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          last_sign_in_at?: string | null
           state_of_deployment?: string | null
           stream?: string | null
           updated_at?: string
@@ -204,10 +207,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      update_user_session: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      update_user_session: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "user"
