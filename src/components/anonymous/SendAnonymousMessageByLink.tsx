@@ -150,10 +150,10 @@ export const SendAnonymousMessageByLink = () => {
         <div className="flex items-center justify-center min-h-full">
           <div className="w-full max-w-md">
             <div className="text-center mb-6">
-              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent mb-2">
-                KoppaWhisper
+              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+                Koppa<span className="text-yellow-300">Whisper</span>
               </h1>
-              <p className="text-sm text-muted-foreground">Anonymous messaging platform</p>
+              <p className="text-sm text-white/80">Anonymous messaging platform</p>
             </div>
             <Card className="shadow-lg border-0" style={{ 
               background: 'var(--gradient-card)',
