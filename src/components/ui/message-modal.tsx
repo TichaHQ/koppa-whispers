@@ -3,13 +3,7 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Share2, MessageCircle } from "lucide-react";
+import { Share2 } from "lucide-react";
 import { format } from "date-fns";
 import html2canvas from "html2canvas";
 import { useRef } from "react";
@@ -27,7 +21,7 @@ interface MessageModalProps {
 export const MessageModal = ({ isOpen, onClose, message, title }: MessageModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
   
-  const captureAndShare = async (platform: string) => {
+  const captureAndShare = async () => {
     if (!modalRef.current) return;
     
     try {
@@ -37,7 +31,7 @@ export const MessageModal = ({ isOpen, onClose, message, title }: MessageModalPr
         useCORS: true,
       });
       
-      canvas.toBlob((blob) => {
+      canvas.toBlob(async (blob) => {
         if (!blob) return;
         
         const signupUrl = window.location.origin;
@@ -45,45 +39,24 @@ export const MessageModal = ({ isOpen, onClose, message, title }: MessageModalPr
         
         const file = new File([blob], 'whisper-message.png', { type: 'image/png' });
         
-        switch (platform) {
-          case 'whatsapp':
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-              navigator.share({
-                files: [file],
-                text: shareText,
-              });
-            } else {
-              const encodedText = encodeURIComponent(shareText);
-              window.open(`https://wa.me/?text=${encodedText}`, '_blank');
-            }
-            break;
-          case 'whatsapp-business':
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-              navigator.share({
-                files: [file],
-                text: shareText,
-              });
-            } else {
-              const encodedText = encodeURIComponent(shareText);
-              window.open(`https://api.whatsapp.com/send?text=${encodedText}`, '_blank');
-            }
-            break;
-          case 'facebook':
-            const encodedUrl = encodeURIComponent(signupUrl);
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodeURIComponent(shareText)}`, '_blank');
-            break;
-          case 'twitter':
-            const encodedTweet = encodeURIComponent(shareText);
-            window.open(`https://twitter.com/intent/tweet?text=${encodedTweet}`, '_blank');
-            break;
-          case 'instagram':
-            // Instagram doesn't support direct sharing, so we'll download the image
-            const link = document.createElement('a');
-            link.download = 'whisper-message.png';
-            link.href = canvas.toDataURL();
-            link.click();
-            alert('Image downloaded! You can now upload it to Instagram and add your caption.');
-            break;
+        // Check if native sharing is supported
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              files: [file],
+              text: shareText,
+            });
+          } catch (error) {
+            // User cancelled or sharing failed
+            console.log('Share cancelled or failed:', error);
+          }
+        } else {
+          // Fallback: Download the image
+          const link = document.createElement('a');
+          link.download = 'whisper-message.png';
+          link.href = canvas.toDataURL();
+          link.click();
+          alert('Image downloaded! You can now share it on your preferred platform.');
         }
       }, 'image/png');
     } catch (error) {
@@ -132,36 +105,15 @@ export const MessageModal = ({ isOpen, onClose, message, title }: MessageModalPr
         
         {/* Share Button - Inside modal at bottom */}
         <div className="px-6 pb-6">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="default" size="lg" className="w-full shadow-lg bg-gradient-primary hover:opacity-90 transition-opacity">
-                <Share2 className="h-4 w-4 mr-2" />
-                Share Whisper
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" className="w-56">
-              <DropdownMenuItem onClick={() => captureAndShare('whatsapp')}>
-                <MessageCircle className="h-4 w-4 mr-2 text-green-600" />
-                WhatsApp
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => captureAndShare('whatsapp-business')}>
-                <MessageCircle className="h-4 w-4 mr-2 text-green-700" />
-                WhatsApp Business
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => captureAndShare('facebook')}>
-                <MessageCircle className="h-4 w-4 mr-2 text-blue-600" />
-                Facebook
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => captureAndShare('instagram')}>
-                <MessageCircle className="h-4 w-4 mr-2 text-pink-600" />
-                Instagram
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => captureAndShare('twitter')}>
-                <MessageCircle className="h-4 w-4 mr-2 text-blue-500" />
-                Twitter
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button 
+            variant="default" 
+            size="lg" 
+            className="w-full shadow-lg bg-gradient-primary hover:opacity-90 transition-opacity"
+            onClick={captureAndShare}
+          >
+            <Share2 className="h-4 w-4 mr-2" />
+            Share Whisper
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
