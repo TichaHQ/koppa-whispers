@@ -149,6 +149,12 @@ export const SendAnonymousMessageByLink = () => {
       <div className="min-h-screen p-4 sm:p-6" style={{ background: 'var(--gradient-hero)' }}>
         <div className="flex items-center justify-center min-h-full">
           <div className="w-full max-w-md">
+            <div className="text-center mb-6">
+              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent mb-2">
+                KoppaWhisper
+              </h1>
+              <p className="text-sm text-muted-foreground">Anonymous messaging platform</p>
+            </div>
             <Card className="shadow-lg border-0" style={{ 
               background: 'var(--gradient-card)',
               boxShadow: 'var(--shadow-medium)'
