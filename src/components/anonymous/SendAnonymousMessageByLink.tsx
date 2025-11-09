@@ -155,7 +155,19 @@ export const SendAnonymousMessageByLink = () => {
               </h1>
               <p className="text-sm text-white/80">Anonymous messaging platform</p>
             </div>
-            <Card className="shadow-lg border-0" style={{ 
+            
+            <div className="text-center mb-6 px-4">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white break-words">
+                {linkData.link_name}
+              </h2>
+              {linkData.description && (
+                <p className="text-sm text-white/70 mt-2 break-words">
+                  {linkData.description}
+                </p>
+              )}
+            </div>
+
+            <Card className="shadow-lg border-0" style={{
               background: 'var(--gradient-card)',
               boxShadow: 'var(--shadow-medium)'
             }}>
@@ -167,13 +179,7 @@ export const SendAnonymousMessageByLink = () => {
                   Send Anonymous Message
                 </CardTitle>
                 <CardDescription className="text-base">
-                  Send an anonymous message to <span className="font-semibold text-primary break-words">{linkData.link_name}</span>
-                  {linkData.description && (
-                    <div className="mt-3 p-4 bg-secondary/10 rounded-lg text-sm border border-secondary/20">
-                      <div className="font-medium text-secondary mb-1">About this link:</div>
-                      <div className="text-foreground break-words">{linkData.description}</div>
-                    </div>
-                  )}
+                  Send your anonymous message below
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6 pt-0">
